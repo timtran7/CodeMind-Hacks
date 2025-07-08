@@ -4,7 +4,7 @@ import random
 import time
 import os
 from streamlit_autorefresh import st_autorefresh
-from dotenv import load_dotenv  # Import dotenv
+from dotenv import load_dotenv
 
 load_dotenv()
 
@@ -12,8 +12,8 @@ st.set_page_config(page_title="🧠 Quote Me If You Can", layout="centered")
 st.title("🧠 Quote Me If You Can")
 with st.expander(expanded=True, label="How to Play"):
     st.text("To play, enter the desired timer duration and press Start Timer to begin."+
-         "Search for a keyword to load quotes for the quiz. Answer each question by selecting the correct author and pressing Submit once. "+
-           "After submitting, press Submit again to reveal the Next Quote button and continue. Play as many rounds as you like before the timer runs out!")
+         " Search for a keyword to load quotes for the quiz. Answer each question by selecting the correct author and pressing Submit once. "+
+           "After submitting, the Next Quote button will be revealed and you can click that to move on to the next quote. Play as many rounds as you like before the timer runs out!")
 
 api_key = os.getenv("API_KEY")
 
@@ -43,6 +43,8 @@ if st.session_state.timer_end_time:
     else:
         st.session_state.timer_end_time = None
         st.success("⏰ Time's Up!")
+        st.toast("⏰ Time's up!")
+        st.balloons()
 
 # Reset everything
 if st.button("🔄 Reset Score & Timer"):
@@ -78,9 +80,6 @@ st.markdown("---")
 if st.session_state.quotes:
     st.markdown("### 🎯 Quiz")
 
-    # Determine if Next Quote button is disabled:
-    # Disable only if question not answered yet
-    # Enable if answered (right or wrong)
     next_disabled = not st.session_state.answered
 
     if st.session_state.quote is None or st.button("➡️ Next Quote", disabled=next_disabled):
@@ -110,7 +109,7 @@ if st.session_state.quotes:
             st.session_state.answered = True
             if answer == st.session_state.correct:
                 st.session_state.score += 1
-                st.success("Correct! 🎉 You can now click Next Quote to continue.")
+                st.success("Correct! 🎉 You can now Next Quote to continue.")
             else:
                 st.error(f"Wrong. Correct answer: {st.session_state.correct}")
 
