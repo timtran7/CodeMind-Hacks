@@ -4,12 +4,16 @@ import random
 import time
 import os
 from streamlit_autorefresh import st_autorefresh
+from dotenv import load_dotenv  # Import dotenv
 
-st.set_page_config(page_title="🧠 Quote Quiz Game", layout="centered")
-st.title("🧠 Quote Quiz Game")
-st.text("To play this game, enter an amount for the timer and press start timer to begin. The quiz will be based on the keyword you searched for" \
-"You can play until the timer ends or for however long you want. After pressing submit once, press submit again, so the next quote" \
-"button will appear.")
+load_dotenv()
+
+st.set_page_config(page_title="🧠 Quote Me If You Can", layout="centered")
+st.title("🧠 Quote Me If You Can")
+with st.expander(expanded=True, label="How to Play"):
+    st.text("To play, enter the desired timer duration and press Start Timer to begin."+
+         "Search for a keyword to load quotes for the quiz. Answer each question by selecting the correct author and pressing Submit once. "+
+           "After submitting, press Submit again to reveal the Next Quote button and continue. Play as many rounds as you like before the timer runs out!")
 
 api_key = os.getenv("API_KEY")
 
@@ -40,8 +44,6 @@ if st.session_state.timer_end_time:
         st.session_state.timer_end_time = None
         st.success("⏰ Time's Up!")
 
-st.markdown("---")
-
 # Reset everything
 if st.button("🔄 Reset Score & Timer"):
     for k, v in defaults.items():
@@ -56,7 +58,7 @@ if st.button("Search", disabled=not keyword.strip()):
     st.session_state.keyword = keyword.strip()
     st.session_state.answered = False
     url = f"https://favqs.com/api/quotes/?filter={st.session_state.keyword}&type=keyword"
-    headers = {"Authorization": f'Token token="{api_key}"'}
+    headers = {"Authorization": f'Token token={api_key}'}
     try:
         res = requests.get(url, headers=headers, timeout=10)
         res.raise_for_status()
